@@ -1,26 +1,52 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserEntity } from './entities/user.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
+  constructor(@InjectRepository(UserEntity)
+  private usersRepository: Repository<UserEntity>
+  ) { };
+
   create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+    const userEntity = this.usersRepository.create(createUserDto);
+    return this.usersRepository.save(userEntity);
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll(): Promise<UserEntity[]> {
+    const allUsers: UserEntity[] = await this.usersRepository.find();
+    if (!allUsers.length)
+      throw new NotFoundException('There are not users created yet');
+    return allUsers;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: number): Promise<UserEntity> {
+    const user: UserEntity = await this.validateUsersExists(id);
+    return user
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    await this.usersRepository.update(id, updateUserDto);
+    return this.validateUsersExists(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: number) {
+    const user: UserEntity = await this.validateUsersExists(id);
+    return await this.usersRepository.softRemove(user);
   }
+
+  private async validateUsersExists(id: number): Promise<UserEntity> {
+    const user: UserEntity | null = await this.usersRepository.findOneBy({
+      id,
+    });
+    if (!user)
+      throw new NotFoundException('The user requested was not found')
+    return user;
+  }
+
 }
+
+
