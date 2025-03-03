@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -17,19 +17,34 @@ export class EventsService {
     return this.eventsRepository.save(eventEntity);
   }
 
-  findAll() {
-    return this.eventsRepository.find();
+  async findAll() {
+    const events: EventEntity[] = await this.eventsRepository.find();
+    if (!events?.length)
+      throw new NotFoundException(`There are not events created yet.`);
+    return events;
   }
 
-  findOne(id: number) {
-    return this.eventsRepository.findOneBy({ id });
+  async findOne(id: number) {
+    const event: EventEntity = await this.validateEventExists(id);
+    return event;
   }
 
-  update(id: number, updateEventDto: UpdateEventDto) {
-    return this.eventsRepository.update(id, updateEventDto);
+  async update(id: number, updateEventDto: UpdateEventDto) {
+    await this.eventsRepository.update(id, updateEventDto);
+    return this.validateEventExists(id);
   }
 
   async remove(id: number) {
-    await this.eventsRepository.delete(id);
+    const event: EventEntity = await this.validateEventExists(id);
+    return await this.eventsRepository.softRemove(event);
+  }
+
+  private async validateEventExists(id: number): Promise<EventEntity> {
+    const event: EventEntity | null = await this.eventsRepository.findOneBy({
+      id,
+    });
+    if (!event)
+      throw new NotFoundException(`The event requested was not found.`);
+    return event;
   }
 }

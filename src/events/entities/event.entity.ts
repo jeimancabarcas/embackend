@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity('events')
 export class EventEntity {
@@ -18,14 +25,17 @@ export class EventEntity {
   venue: string;
 
   @Column()
+  country: string;
+
+  @Column()
   city: string;
 
-  @Column({ name: 'created_at', nullable: true, default: new Date() })
+  @CreateDateColumn({ name: 'created_at' })
   createdAt?: Date;
 
-  @Column({ name: 'updated_at', nullable: true })
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt?: Date;
 
-  @Column({ name: 'deleted_at', nullable: true })
+  @DeleteDateColumn({ name: 'deleted_at' })
   deletedAt?: Date;
 }
