@@ -3,10 +3,6 @@ import { IsDateString, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateUserDto {
 
-    @IsNumber()
-    @ApiProperty()
-    fk_roleId?: number
-
     @IsNotEmpty()
     @IsString()
     @ApiProperty()
@@ -19,7 +15,7 @@ export class CreateUserDto {
 
     @IsString()
     @ApiProperty()
-    last_name: string;
+    lastName: string;
 
     @IsDateString()
     @ApiProperty()
@@ -28,16 +24,4 @@ export class CreateUserDto {
     @IsString()
     @ApiProperty()
     address: string;
-
-    @IsDateString()
-    @ApiProperty()
-    createdAt?: Date;
-
-    @IsDateString()
-    @ApiProperty()
-    updatedAt?: Date;
-
-    @IsDateString()
-    @ApiProperty()
-    deletedAt?: Date;
 }

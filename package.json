@@ -60,11 +60,6 @@
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.20.0"
   },
-  "overrides": {
-    "glob": {
-      "version": "^11.0.1"
-    }
-  },
   "jest": {
     "moduleFileExtensions": [
       "js",

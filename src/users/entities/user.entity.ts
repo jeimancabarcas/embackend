@@ -14,16 +14,13 @@ export class UserEntity {
     id?: number;
 
     @Column()
-    fk_roleId: number;
-
-    @Column()
     email: string;
 
     @Column()
     name: string;
 
-    @Column()
-    last_name: string;
+    @Column({name: 'last_name'})
+    lastName: string;
 
     @Column()
     birthdate: Date;
