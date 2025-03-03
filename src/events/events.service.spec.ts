@@ -1,12 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { EventsService } from './events.service';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { EventEntity } from './entities/event.entity';
 
 describe('EventsService', () => {
   let service: EventsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [EventsService],
+      providers: [
+        EventsService,
+        { provide: getRepositoryToken(EventEntity), useValue: {} },
+      ],
     }).compile();
 
     service = module.get<EventsService>(EventsService);

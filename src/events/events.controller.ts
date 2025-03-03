@@ -40,7 +40,7 @@ export class EventsController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.eventsService.remove(+id);
+  remove(@Param('id') id: number) {
+    return this.eventsService.remove(id);
   }
 }
