@@ -37,12 +37,12 @@ export class StaffMemberEntity {
   @ManyToOne(() => UserEntity, (user) => user.staffMemberAssignations)
   user?: UserEntity;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn()
   createdAt?: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn()
   updatedAt?: Date;
 
-  @DeleteDateColumn({ name: 'deleted_at' })
+  @DeleteDateColumn()
   deletedAt?: Date;
 }

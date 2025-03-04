@@ -3,9 +3,14 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { EventEntity } from './event.entity';
+import { UserEntity } from 'src/users/entities/user.entity';
 
 @Entity('hotels')
 export class HotelEntity {
@@ -39,12 +44,19 @@ export class HotelEntity {
   @Column()
   cost: number;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @ManyToOne(() => EventEntity, (event) => event.expenses)
+  event: EventEntity;
+
+  @ManyToMany(() => UserEntity, (user) => user.hotelReservations)
+  @JoinTable({ name: 'hotel_guests' })
+  flightPassengers?: UserEntity[];
+
+  @CreateDateColumn()
   createdAt?: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn()
   updatedAt?: Date;
 
-  @DeleteDateColumn({ name: 'deleted_at' })
+  @DeleteDateColumn()
   deletedAt?: Date;
 }
