@@ -17,6 +17,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       autoLoadEntities: true,
       synchronize: true,
       dropSchema: true,
+      retryAttempts: 2,
     }),
   ],
 })
