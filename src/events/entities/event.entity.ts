@@ -3,9 +3,11 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { StaffMemberEntity } from './staff-member.entity';
 
 @Entity('events')
 export class EventEntity {
@@ -29,6 +31,9 @@ export class EventEntity {
 
   @Column()
   city: string;
+
+  @OneToMany(() => StaffMemberEntity, (staffMember) => staffMember.event)
+  staffMembers: StaffMemberEntity[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt?: Date;

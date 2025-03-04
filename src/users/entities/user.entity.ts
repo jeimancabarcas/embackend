@@ -5,11 +5,13 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { PermissionEntity } from './permissions.entity';
 import { RoleEntity } from './roles.entity';
+import { StaffMemberEntity } from 'src/events/entities/staff-member.entity';
 
 @Entity('users')
 export class UserEntity {
@@ -30,6 +32,9 @@ export class UserEntity {
 
   @Column()
   address: string;
+
+  @OneToMany(() => StaffMemberEntity, (staffMember) => staffMember.user)
+  staffMemberAssignations: StaffMemberEntity[];
 
   @ManyToMany(() => PermissionEntity)
   @JoinTable({ name: 'users_permissions' })
