@@ -7,9 +7,10 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectRepository(UserEntity)
-  private usersRepository: Repository<UserEntity>
-  ) { };
+  constructor(
+    @InjectRepository(UserEntity)
+    private usersRepository: Repository<UserEntity>,
+  ) {}
 
   create(createUserDto: CreateUserDto) {
     const userEntity = this.usersRepository.create(createUserDto);
@@ -25,7 +26,7 @@ export class UsersService {
 
   async findOne(id: number): Promise<UserEntity> {
     const user: UserEntity = await this.validateUsersExists(id);
-    return user
+    return user;
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
@@ -42,11 +43,7 @@ export class UsersService {
     const user: UserEntity | null = await this.usersRepository.findOneBy({
       id,
     });
-    if (!user)
-      throw new NotFoundException('The user requested was not found')
+    if (!user) throw new NotFoundException('The user requested was not found');
     return user;
   }
-
 }
-
-

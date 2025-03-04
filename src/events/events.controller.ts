@@ -40,7 +40,7 @@ export class EventsController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.eventsService.remove(id);
   }
 }
