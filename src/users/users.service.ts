@@ -4,6 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import { admin } from '../config/firebase.config';
 
 @Injectable()
 export class UsersService {
@@ -12,8 +13,21 @@ export class UsersService {
     private usersRepository: Repository<UserEntity>,
   ) {}
 
-  create(createUserDto: CreateUserDto) {
-    const userEntity = this.usersRepository.create(createUserDto);
+  async create(createUserDto: CreateUserDto) {
+    const userRecord = await admin.auth().createUser({
+    email: createUserDto.email,
+    password: createUserDto.password
+   })
+
+    const userEntity = this.usersRepository.create({
+      id: userRecord.uid,
+      address: createUserDto.address,
+      birthdate: createUserDto.birthdate,
+      email:createUserDto.email,
+      name:createUserDto.name,
+      lastName:createUserDto.lastName,
+      password:createUserDto.password
+    });
     return this.usersRepository.save(userEntity);
   }
 
@@ -24,22 +38,24 @@ export class UsersService {
     return allUsers;
   }
 
-  async findOne(id: number): Promise<UserEntity> {
+  async findOne(id: string): Promise<UserEntity> {
     const user: UserEntity = await this.validateUsersExists(id);
     return user;
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  
+
+  async update(id: string, updateUserDto: UpdateUserDto) {
     await this.usersRepository.update(id, updateUserDto);
     return this.validateUsersExists(id);
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const user: UserEntity = await this.validateUsersExists(id);
     return await this.usersRepository.softRemove(user);
   }
 
-  private async validateUsersExists(id: number): Promise<UserEntity> {
+  private async validateUsersExists(id: string): Promise<UserEntity> {
     const user: UserEntity | null = await this.usersRepository.findOneBy({
       id,
     });
