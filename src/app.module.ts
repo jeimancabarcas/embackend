@@ -23,6 +23,7 @@ import { FirebaseModule } from './firebase/firebase.module';
       autoLoadEntities: true,
       synchronize: true,
       dropSchema: true,
+      retryAttempts: 2,
     }),
   ],
 })

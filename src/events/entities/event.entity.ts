@@ -3,9 +3,14 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { StaffMemberEntity } from './staff-member.entity';
+import { ExpenseEntity } from './expense.entity';
+import { FlightEntity } from './flight.entity';
+import { HotelEntity } from './hotel.entity';
 
 @Entity('events')
 export class EventEntity {
@@ -15,10 +20,10 @@ export class EventEntity {
   @Column()
   name: string;
 
-  @Column({ name: 'start_date' })
+  @Column()
   startDate: Date;
 
-  @Column({ name: 'end_date' })
+  @Column()
   endDate: Date;
 
   @Column()
@@ -30,12 +35,24 @@ export class EventEntity {
   @Column()
   city: string;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @OneToMany(() => StaffMemberEntity, (staffMember) => staffMember.event)
+  staffMembers?: StaffMemberEntity[];
+
+  @OneToMany(() => ExpenseEntity, (expense) => expense.event)
+  expenses?: ExpenseEntity[];
+
+  @OneToMany(() => FlightEntity, (flight) => flight.event)
+  flights?: FlightEntity[];
+
+  @OneToMany(() => HotelEntity, (hotel) => hotel.event)
+  hotels?: HotelEntity[];
+
+  @CreateDateColumn()
   createdAt?: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn()
   updatedAt?: Date;
 
-  @DeleteDateColumn({ name: 'deleted_at' })
+  @DeleteDateColumn()
   deletedAt?: Date;
 }

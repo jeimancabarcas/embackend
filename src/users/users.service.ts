@@ -18,7 +18,9 @@ export class UsersService {
   }
 
   async findAll(): Promise<UserEntity[]> {
-    const allUsers: UserEntity[] = await this.usersRepository.find();
+    const allUsers: UserEntity[] = await this.usersRepository.find({
+      relations: ['permissions'],
+    });
     if (!allUsers.length)
       throw new NotFoundException('There are not users created yet');
     return allUsers;
@@ -30,7 +32,9 @@ export class UsersService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
-    await this.usersRepository.update(id, updateUserDto);
+    const user: UserEntity = await this.validateUsersExists(id);
+    user.permissions = updateUserDto.permissions as any;
+    await this.usersRepository.save(user);
     return this.validateUsersExists(id);
   }
 
@@ -40,8 +44,9 @@ export class UsersService {
   }
 
   private async validateUsersExists(id: number): Promise<UserEntity> {
-    const user: UserEntity | null = await this.usersRepository.findOneBy({
-      id,
+    const user: UserEntity | null = await this.usersRepository.findOne({
+      where: { id },
+      relations: ['permissions'],
     });
     if (!user) throw new NotFoundException('The user requested was not found');
     return user;

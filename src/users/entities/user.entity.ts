@@ -3,9 +3,18 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { PermissionEntity } from './permissions.entity';
+import { RoleEntity } from './roles.entity';
+import { StaffMemberEntity } from 'src/events/entities/staff-member.entity';
+import { ExpenseEntity } from 'src/events/entities/expense.entity';
+import { HotelEntity } from 'src/events/entities/hotel.entity';
+import { FlightEntity } from 'src/events/entities/flight.entity';
 
 @Entity('users')
 export class UserEntity {
@@ -18,7 +27,7 @@ export class UserEntity {
   @Column()
   name: string;
 
-  @Column({ name: 'last_name' })
+  @Column()
   lastName: string;
 
   @Column()
@@ -27,12 +36,32 @@ export class UserEntity {
   @Column()
   address: string;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @OneToMany(() => StaffMemberEntity, (staffMember) => staffMember.user)
+  staffMemberAssignations?: StaffMemberEntity[];
+
+  @OneToMany(() => ExpenseEntity, (expense) => expense.user)
+  expenses?: ExpenseEntity[];
+
+  @ManyToMany(() => PermissionEntity)
+  @JoinTable({ name: 'users_permissions' })
+  permissions?: PermissionEntity[];
+
+  @ManyToMany(() => RoleEntity)
+  @JoinTable({ name: 'users_roles' })
+  roles: RoleEntity[];
+
+  @ManyToMany(() => HotelEntity)
+  hotelReservations: HotelEntity[];
+
+  @ManyToMany(() => FlightEntity)
+  flightReservations: FlightEntity[];
+
+  @CreateDateColumn()
   createdAt?: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn()
   updatedAt?: Date;
 
-  @DeleteDateColumn({ name: 'deleted_at' })
+  @DeleteDateColumn()
   deletedAt?: Date;
 }
