@@ -12,7 +12,7 @@ export class UsersService {
     private usersRepository: Repository<UserEntity>,
   ) {}
 
-  async create(createUserDto: CreateUserDto) {
+  create(createUserDto: CreateUserDto) {
     const userEntity = this.usersRepository.create(createUserDto);
     return this.usersRepository.save(userEntity);
   }
