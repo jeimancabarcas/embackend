@@ -18,7 +18,7 @@ import { FirebaseAuthGuard } from 'src/auth/firebase-auth.guard';
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
-  @UseGuards(FirebaseAuthGuard)
+  //@UseGuards(FirebaseAuthGuard)
   @Post()
   create(@Body() createEventDto: CreateEventDto) {
     return this.eventsService.create(createEventDto);

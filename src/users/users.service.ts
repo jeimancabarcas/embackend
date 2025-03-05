@@ -4,17 +4,18 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
 import { Repository } from 'typeorm';
-import { admin } from '../config/firebase.config';
+import { FirebaseService } from 'src/firebase/firebase.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(UserEntity)
     private usersRepository: Repository<UserEntity>,
+    private firebaseService: FirebaseService
   ) {}
 
   async create(createUserDto: CreateUserDto) {
-    const userRecord = await admin.auth().createUser({
+    const userRecord = await this.firebaseService.getAuth().auth().createUser({
     email: createUserDto.email,
     password: createUserDto.password
    })
