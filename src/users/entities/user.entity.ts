@@ -1,10 +1,8 @@
-import { IsNotEmpty, IsString } from 'class-validator';
 import {
     Column,
     CreateDateColumn,
     DeleteDateColumn,
     Entity,
-    PrimaryColumn,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
@@ -12,11 +10,8 @@ import {
 @Entity('users')
 export class UserEntity {
 
-    @PrimaryColumn()
-    id?: string;
-
-    @Column()
-    password: string
+    @PrimaryGeneratedColumn()
+    id?: number;
 
     @Column()
     email: string;

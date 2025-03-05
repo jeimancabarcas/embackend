@@ -4,31 +4,16 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
 import { Repository } from 'typeorm';
-import { FirebaseService } from 'src/firebase/firebase.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(UserEntity)
     private usersRepository: Repository<UserEntity>,
-    private firebaseService: FirebaseService
   ) {}
 
   async create(createUserDto: CreateUserDto) {
-    const userRecord = await this.firebaseService.getAuth().auth().createUser({
-    email: createUserDto.email,
-    password: createUserDto.password
-   })
-
-    const userEntity = this.usersRepository.create({
-      id: userRecord.uid,
-      address: createUserDto.address,
-      birthdate: createUserDto.birthdate,
-      email:createUserDto.email,
-      name:createUserDto.name,
-      lastName:createUserDto.lastName,
-      password:createUserDto.password
-    });
+    const userEntity = this.usersRepository.create(createUserDto);
     return this.usersRepository.save(userEntity);
   }
 
@@ -39,24 +24,22 @@ export class UsersService {
     return allUsers;
   }
 
-  async findOne(id: string): Promise<UserEntity> {
+  async findOne(id: number): Promise<UserEntity> {
     const user: UserEntity = await this.validateUsersExists(id);
     return user;
   }
 
-  
-
-  async update(id: string, updateUserDto: UpdateUserDto) {
+  async update(id: number, updateUserDto: UpdateUserDto) {
     await this.usersRepository.update(id, updateUserDto);
     return this.validateUsersExists(id);
   }
 
-  async remove(id: string) {
+  async remove(id: number) {
     const user: UserEntity = await this.validateUsersExists(id);
     return await this.usersRepository.softRemove(user);
   }
 
-  private async validateUsersExists(id: string): Promise<UserEntity> {
+  private async validateUsersExists(id: number): Promise<UserEntity> {
     const user: UserEntity | null = await this.usersRepository.findOneBy({
       id,
     });

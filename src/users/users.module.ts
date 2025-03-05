@@ -6,7 +6,7 @@ import { UserEntity } from './entities/user.entity';
 import { FirebaseModule } from 'src/firebase/firebase.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserEntity]), FirebaseModule],
+  imports: [TypeOrmModule.forFeature([UserEntity])],
   controllers: [UsersController],
   providers: [UsersService],
 })

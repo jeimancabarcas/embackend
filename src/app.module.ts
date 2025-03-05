@@ -24,7 +24,6 @@ import { FirebaseModule } from './firebase/firebase.module';
       synchronize: true,
       dropSchema: true,
     }),
-    FirebaseModule,
   ],
 })
 export class AppModule {}
