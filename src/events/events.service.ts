@@ -57,7 +57,6 @@ export class EventsService {
   }
 
   async findAll(getStaffMembers?: boolean) {
-    console.log('getStaffMembers', getStaffMembers);
     const relations: string[] = [];
     if (getStaffMembers) {
       relations.push('staffMembers');
