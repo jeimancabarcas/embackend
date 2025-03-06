@@ -20,7 +20,8 @@ export class FirebaseAuthGuard implements CanActivate {
     }
 
     try {
-      await this.firebaseAdmin.auth().verifyIdToken(idToken);
+      if(!await this.firebaseAdmin.auth().verifyIdToken(idToken))
+        return false;
       return true;
     } catch (error) {
       throw new UnauthorizedException('Invalid or expired token' + error);
