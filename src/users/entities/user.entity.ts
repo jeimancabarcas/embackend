@@ -48,13 +48,13 @@ export class UserEntity {
 
   @ManyToMany(() => RoleEntity)
   @JoinTable({ name: 'users_roles' })
-  roles: RoleEntity[];
+  roles?: RoleEntity[];
 
   @ManyToMany(() => HotelEntity)
-  hotelReservations: HotelEntity[];
+  hotelReservations?: HotelEntity[];
 
   @ManyToMany(() => FlightEntity)
-  flightReservations: FlightEntity[];
+  flightReservations?: FlightEntity[];
 
   @CreateDateColumn()
   createdAt?: Date;

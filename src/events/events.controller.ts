@@ -7,6 +7,9 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  ParseBoolPipe,
+  Query,
+  DefaultValuePipe,
 } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
@@ -22,8 +25,11 @@ export class EventsController {
   }
 
   @Get()
-  findAll() {
-    return this.eventsService.findAll();
+  findAll(
+    @Query('getStaffMembers', new DefaultValuePipe(false), ParseBoolPipe)
+    getStaffMembers: boolean,
+  ) {
+    return this.eventsService.findAll(getStaffMembers);
   }
 
   @Get(':id')

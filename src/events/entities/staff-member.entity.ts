@@ -22,7 +22,7 @@ export class StaffMemberEntity {
   salary: number;
 
   @Column()
-  dietButget: number;
+  dietBudget: number;
 
   @Column()
   contractAttachment: string;
