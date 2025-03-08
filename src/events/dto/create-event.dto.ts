@@ -1,5 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDateString, IsNotEmpty, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsArray,
+  IsDateString,
+  IsNotEmpty,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
+import { CreateStaffMemberDto } from './create-staff-member.dto';
 
 export class CreateEventDto {
   @IsNotEmpty()
@@ -29,4 +37,10 @@ export class CreateEventDto {
   @IsNotEmpty()
   @ApiProperty()
   city: string;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateStaffMemberDto)
+  @ApiProperty()
+  staffMembers?: CreateStaffMemberDto[];
 }
