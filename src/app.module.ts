@@ -1,12 +1,9 @@
-import { Module, OnModuleInit } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { EventsModule } from './events/events.module';
 import { UsersModule } from './users/users.module';
-import { InjectDataSource, TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { FirebaseModule } from './firebase/firebase.module';
-import { DataSource } from 'typeorm';
-import { PositionEntity } from './events/entities/position.entity';
-import { UserEntity } from './users/entities/user.entity';
 
 @Module({
   imports: [
