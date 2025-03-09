@@ -7,10 +7,12 @@ import { PermissionsController } from './controllers/permissions/permissions.con
 import { RolesController } from './controllers/roles/roles.controller';
 import { PermissionEntity } from './entities/permissions.entity';
 import { RoleEntity } from './entities/roles.entity';
+import { FirebaseModule } from 'src/firebase/firebase.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([UserEntity, PermissionEntity, RoleEntity]),
+    FirebaseModule,
   ],
   controllers: [UsersController, PermissionsController, RolesController],
   providers: [UsersService],

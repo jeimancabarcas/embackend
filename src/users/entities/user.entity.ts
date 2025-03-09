@@ -22,6 +22,9 @@ export class UserEntity {
   id?: number;
 
   @Column()
+  idFirebase: string;
+
+  @Column()
   email: string;
 
   @Column()
