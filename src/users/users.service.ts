@@ -10,6 +10,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import * as admin from 'firebase-admin';
+import { UserRecord } from 'firebase-admin/lib/auth/user-record';
+import { FirebaseError } from 'firebase-admin/lib/utils/error';
 
 @Injectable()
 export class UsersService {
@@ -20,19 +22,28 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
-    const userFirebase = await this.authAdmin.auth().createUser({
-      email: createUserDto.email,
-      password: createUserDto.password,
-    });
+    let userFirebase: UserRecord | null = null;
     try {
+      userFirebase = await this.authAdmin.auth().createUser({
+        email: createUserDto.email,
+        password: createUserDto.password,
+      });
+
       const userEntity: UserEntity = this.usersRepository.create({
         idFirebase: userFirebase.uid,
         ...createUserDto,
       });
       return this.usersRepository.save(userEntity);
     } catch (error) {
-      await this.authAdmin.auth().deleteUser(userFirebase.uid);
-      throw new InternalServerErrorException(error.message);
+      if (userFirebase?.uid)
+        await this.authAdmin.auth().deleteUser(userFirebase.uid);
+
+      if (error instanceof FirebaseError) {
+        throw new InternalServerErrorException(error.message);
+      }
+      throw new InternalServerErrorException(
+        'An error occured while saving the user',
+      );
     }
   }
 
