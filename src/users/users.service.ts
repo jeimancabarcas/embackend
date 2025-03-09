@@ -1,20 +1,39 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import * as admin from 'firebase-admin';
 
 @Injectable()
 export class UsersService {
   constructor(
+    @Inject('FIREBASE_ADMIN') private readonly authAdmin: admin.app.App,
     @InjectRepository(UserEntity)
     private usersRepository: Repository<UserEntity>,
   ) {}
 
-  create(createUserDto: CreateUserDto) {
-    const userEntity = this.usersRepository.create(createUserDto);
-    return this.usersRepository.save(userEntity);
+  async create(createUserDto: CreateUserDto) {
+    const userFirebase = await this.authAdmin.auth().createUser({
+      email: createUserDto.email,
+      password: createUserDto.password,
+    });
+    try {
+      const userEntity: UserEntity = this.usersRepository.create({
+        idFirebase: userFirebase.uid,
+        ...createUserDto,
+      });
+      return this.usersRepository.save(userEntity);
+    } catch (error) {
+      await this.authAdmin.auth().deleteUser(userFirebase.uid);
+      throw new InternalServerErrorException(error.message);
+    }
   }
 
   async findAll(): Promise<UserEntity[]> {
