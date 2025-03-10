@@ -9,7 +9,7 @@ import * as admin from 'firebase-admin';
 
 @Injectable()
 export class FirebaseAuthGuard implements CanActivate {
-  constructor(@Inject('FIREBASE_ADMIN') private firebaseAdmin: admin.app.App) { }
+  constructor(@Inject('FIREBASE_ADMIN') private firebaseAdmin: admin.app.App) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -19,9 +19,8 @@ export class FirebaseAuthGuard implements CanActivate {
       throw new UnauthorizedException('No token provided');
     }
 
-    if (!await this.firebaseAdmin.auth().verifyIdToken(idToken))
+    if (!(await this.firebaseAdmin.auth().verifyIdToken(idToken)))
       throw new UnauthorizedException('Invalid or expired token');
     return true;
-
   }
 }
