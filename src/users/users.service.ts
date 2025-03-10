@@ -11,7 +11,6 @@ import { UserEntity } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import * as admin from 'firebase-admin';
 import { UserRecord } from 'firebase-admin/lib/auth/user-record';
-import { FirebaseError } from 'firebase-admin/lib/utils/error';
 
 @Injectable()
 export class UsersService {
@@ -28,19 +27,18 @@ export class UsersService {
         email: createUserDto.email,
         password: createUserDto.password,
       });
-
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+    try {
       const userEntity: UserEntity = this.usersRepository.create({
         idFirebase: userFirebase.uid,
         ...createUserDto,
       });
       return this.usersRepository.save(userEntity);
-    } catch (error) {
+    } catch {
       if (userFirebase?.uid)
         await this.authAdmin.auth().deleteUser(userFirebase.uid);
-
-      if (error instanceof FirebaseError) {
-        throw new InternalServerErrorException(error.message);
-      }
       throw new InternalServerErrorException(
         'An error occured while saving the user',
       );
