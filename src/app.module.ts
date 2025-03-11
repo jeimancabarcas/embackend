@@ -4,6 +4,7 @@ import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { FirebaseModule } from './firebase/firebase.module';
+import { LocationsModule } from './locations/locations.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { FirebaseModule } from './firebase/firebase.module';
       dropSchema: true,
       retryAttempts: 2,
     }),
+    LocationsModule,
   ],
 })
 export class AppModule {}
