@@ -68,7 +68,12 @@ export class UsersService {
 
   async remove(id: number) {
     const user: UserEntity = await this.validateUsersExists(id);
-    return await this.usersRepository.softRemove(user);
+    try {
+      await this.authAdmin.auth().deleteUser(user.idFirebase);
+      return await this.usersRepository.softRemove(user);
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 
   private async validateUsersExists(id: number): Promise<UserEntity> {
