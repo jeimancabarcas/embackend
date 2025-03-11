@@ -4,6 +4,7 @@ import {
   IsArray,
   IsDateString,
   IsNotEmpty,
+  IsNumber,
   IsString,
   ValidateNested,
 } from 'class-validator';
@@ -28,15 +29,13 @@ export class CreateEventDto {
   @ApiProperty()
   venue: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @IsNumber()
   @ApiProperty()
-  country: string;
+  countryId: number;
 
-  @IsString()
-  @IsNotEmpty()
+  @IsNumber()
   @ApiProperty()
-  city: string;
+  cityId: number;
 
   @IsArray()
   @ValidateNested({ each: true })

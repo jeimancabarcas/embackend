@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsDefined, IsNumber, IsOptional } from 'class-validator';
 
 export class CreateStaffMemberDto {
   @IsNumber()
@@ -10,9 +10,9 @@ export class CreateStaffMemberDto {
   @ApiProperty()
   dietBudget: number;
 
-  @IsString()
+  @IsDefined()
   @ApiProperty()
-  contractAttachment: string;
+  contractAttachment: File;
 
   @IsNumber()
   @ApiProperty()

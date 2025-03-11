@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -11,6 +12,8 @@ import { StaffMemberEntity } from './staff-member.entity';
 import { ExpenseEntity } from './expense.entity';
 import { FlightEntity } from './flight.entity';
 import { HotelEntity } from './hotel.entity';
+import { CountryEntity } from 'src/locations/entities/country.entity';
+import { CityEntity } from 'src/locations/entities/city.entity';
 
 @Entity('events')
 export class EventEntity {
@@ -29,11 +32,11 @@ export class EventEntity {
   @Column()
   venue: string;
 
-  @Column()
-  country: string;
+  @ManyToOne(() => CountryEntity)
+  country: CountryEntity;
 
-  @Column()
-  city: string;
+  @ManyToOne(() => CityEntity)
+  city: CityEntity;
 
   @OneToMany(() => StaffMemberEntity, (staffMember) => staffMember.event)
   staffMembers?: StaffMemberEntity[];

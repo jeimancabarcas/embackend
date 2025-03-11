@@ -28,6 +28,7 @@ export class EventsService {
             StaffMemberEntity,
             staffMembers.map((staff) => ({
               ...staff,
+              contractAttachment: '',
               event: { id: savedEvent.id },
               user: { id: staff.userId },
               position: { id: staff.positionId },
@@ -37,6 +38,7 @@ export class EventsService {
         }
         return manager.findOne(EventEntity, {
           where: { id: savedEvent.id },
+          relations: ['country', 'city'],
         });
       } catch (error) {
         if (error?.code === '23503') {
@@ -64,20 +66,29 @@ export class EventsService {
       relations.push('staffMembers.position');
     }
     const events: EventEntity[] = await this.eventsRepository.find({
-      relations: relations,
+      relations: [...relations, 'city', 'country'],
     });
     if (!events?.length)
       throw new NotFoundException(`There are not events created yet.`);
     return events;
   }
 
-  async findOne(id: number) {
-    const event: EventEntity = await this.validateEventExists(id);
+  async findOne(id: number, getStaffMembers?: boolean) {
+    const relations: string[] = [];
+    if (getStaffMembers) {
+      relations.push('staffMembers');
+      relations.push('staffMembers.user');
+      relations.push('staffMembers.position');
+    }
+    const event: EventEntity | null = await this.eventsRepository.findOne({
+      where: { id },
+      relations: [...relations, 'city', 'country'],
+    });
     return event;
   }
 
   async update(id: number, updateEventDto: UpdateEventDto) {
-    await this.eventsRepository.update(id, updateEventDto);
+    await this.eventsRepository.update(id, updateEventDto as any);
     return this.validateEventExists(id);
   }
 

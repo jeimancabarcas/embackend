@@ -3,9 +3,8 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinColumn,
+  Index,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -14,6 +13,7 @@ import { UserEntity } from 'src/users/entities/user.entity';
 import { PositionEntity } from './position.entity';
 
 @Entity('staff_members')
+@Index(['event', 'user', 'position'], { unique: true })
 export class StaffMemberEntity {
   @PrimaryGeneratedColumn()
   id?: number;
@@ -27,8 +27,7 @@ export class StaffMemberEntity {
   @Column()
   contractAttachment: string;
 
-  @OneToOne(() => PositionEntity)
-  @JoinColumn()
+  @ManyToOne(() => PositionEntity)
   position: PositionEntity;
 
   @ManyToOne(() => EventEntity, (event) => event.staffMembers)

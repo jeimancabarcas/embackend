@@ -9,6 +9,9 @@ export class CountryEntity {
   @Column({ unique: true })
   name: string;
 
+  @Column({ unique: true })
+  code: string;
+
   @OneToMany(() => CityEntity, (city) => city.country)
   cities: CityEntity[];
 }

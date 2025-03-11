@@ -33,8 +33,12 @@ export class EventsController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.eventsService.findOne(id);
+  findOne(
+    @Query('getStaffMembers', new DefaultValuePipe(false), ParseBoolPipe)
+    getStaffMembers: boolean,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.eventsService.findOne(id, getStaffMembers);
   }
 
   @Patch(':id')
