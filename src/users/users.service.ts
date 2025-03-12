@@ -61,9 +61,15 @@ export class UsersService {
 
   async update(id: number, updateUserDto: UpdateUserDto) {
     const user: UserEntity = await this.validateUsersExists(id);
-    user.permissions = updateUserDto.permissions as any;
-    await this.usersRepository.save(user);
-    return this.validateUsersExists(id);
+    try {
+      await this.usersRepository.update(id, user);
+      await this.authAdmin.auth().updateUser(user.idFirebase, {
+        email: updateUserDto.email,
+      });
+      return this.validateUsersExists(id);
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 
   async remove(id: number) {
