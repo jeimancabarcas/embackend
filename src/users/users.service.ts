@@ -60,9 +60,14 @@ export class UsersService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
+    const filterUser = Object.fromEntries(
+      Object.entries(updateUserDto).filter(
+        ([Key, value]) => value !== undefined && Key !== 'permissions',
+      ),
+    );
     const user: UserEntity = await this.validateUsersExists(id);
     try {
-      await this.usersRepository.update(id, user);
+      await this.usersRepository.update(id, filterUser);
       await this.authAdmin.auth().updateUser(user.idFirebase, {
         email: updateUserDto.email,
       });
