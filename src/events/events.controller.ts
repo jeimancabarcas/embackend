@@ -14,14 +14,25 @@ import {
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
+import { CreateStaffMemberDto } from './dto/create-staff-member.dto';
 
 @Controller('events')
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
-  @Post()
-  create(@Body() createEventDto: CreateEventDto) {
-    return this.eventsService.create(createEventDto);
+  @Post('save/information')
+  saveInformation(@Body() createEventDto: CreateEventDto) {
+    return this.eventsService.saveEventInformation(createEventDto);
+  }
+
+  @Post('save/staff')
+  saveStaffMembers(@Body() createStaffMemberDto: CreateStaffMemberDto) {
+    return this.eventsService.saveEventStaff(createStaffMemberDto);
+  }
+
+  @Post('confirm/:id')
+  confirmEvent(@Param('id', ParseIntPipe) eventId: number) {
+    return this.eventsService.confirmEvent(eventId);
   }
 
   @Get()
@@ -52,5 +63,10 @@ export class EventsController {
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.eventsService.remove(id);
+  }
+
+  @Delete('staff/:id')
+  removeStaff(@Param('id', ParseIntPipe) id: number) {
+    return this.eventsService.removeStaffMember(id);
   }
 }

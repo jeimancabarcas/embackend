@@ -15,6 +15,11 @@ import { HotelEntity } from './hotel.entity';
 import { CountryEntity } from 'src/locations/entities/country.entity';
 import { CityEntity } from 'src/locations/entities/city.entity';
 
+export enum EventStatusEnum {
+  DRAFT = 'draft',
+  CREATED = 'created',
+}
+
 @Entity('events')
 export class EventEntity {
   @PrimaryGeneratedColumn()
@@ -31,6 +36,13 @@ export class EventEntity {
 
   @Column()
   venue: string;
+
+  @Column({
+    type: 'enum',
+    enum: EventStatusEnum,
+    default: EventStatusEnum.DRAFT,
+  })
+  status: EventStatusEnum;
 
   @ManyToOne(() => CountryEntity)
   country: CountryEntity;

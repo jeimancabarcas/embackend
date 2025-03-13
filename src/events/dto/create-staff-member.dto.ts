@@ -2,6 +2,11 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsDefined, IsNumber, IsOptional } from 'class-validator';
 
 export class CreateStaffMemberDto {
+  @IsOptional()
+  @IsNumber()
+  @ApiProperty()
+  id: number;
+
   @IsNumber()
   @ApiProperty()
   salary: number;
@@ -22,8 +27,7 @@ export class CreateStaffMemberDto {
   @ApiProperty()
   userId: number;
 
-  @IsOptional()
   @IsNumber()
   @ApiProperty()
-  eventId?: number;
+  eventId: number;
 }

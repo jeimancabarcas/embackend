@@ -27,14 +27,18 @@ export class StaffMemberEntity {
   @Column()
   contractAttachment: string;
 
-  @ManyToOne(() => PositionEntity)
+  @ManyToOne(() => PositionEntity, { nullable: false })
   position: PositionEntity;
 
-  @ManyToOne(() => EventEntity, (event) => event.staffMembers)
-  event?: EventEntity;
+  @ManyToOne(() => EventEntity, (event) => event.staffMembers, {
+    nullable: false,
+  })
+  event: EventEntity;
 
-  @ManyToOne(() => UserEntity, (user) => user.staffMemberAssignations)
-  user?: UserEntity;
+  @ManyToOne(() => UserEntity, (user) => user.staffMemberAssignations, {
+    nullable: false,
+  })
+  user: UserEntity;
 
   @CreateDateColumn()
   createdAt?: Date;
