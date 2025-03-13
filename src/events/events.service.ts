@@ -14,6 +14,8 @@ import { CityEntity } from 'src/locations/entities/city.entity';
 import { CountryEntity } from 'src/locations/entities/country.entity';
 import { PositionEntity } from './entities/position.entity';
 import { UserEntity } from 'src/users/entities/user.entity';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class EventsService {
@@ -23,15 +25,20 @@ export class EventsService {
     private readonly dataSource: DataSource,
   ) {}
 
-  saveEventStaff(createStaffMembersDto: CreateStaffMemberDto) {
+  saveEventStaff(
+    createStaffMembersDto: CreateStaffMemberDto,
+    file?: Express.Multer.File,
+  ) {
     const { contractAttachment, eventId, positionId, userId, ...staffData } =
       createStaffMembersDto;
     return this.dataSource.transaction(async (manager) => {
       let staff: StaffMemberEntity | null;
       try {
         if (createStaffMembersDto.id) {
+          console.log(createStaffMembersDto.id);
           staff = await manager.findOne(StaffMemberEntity, {
             where: { id: createStaffMembersDto.id },
+            relations: ['user', 'event', 'position'],
           });
           if (!staff) {
             throw new BadRequestException('This staff member does not exist');
@@ -42,8 +49,6 @@ export class EventsService {
             id: createStaffMembersDto.positionId,
           } as PositionEntity;
           staff.user = { id: createStaffMembersDto.userId } as UserEntity;
-          //TODO
-          staff.contractAttachment = '';
         } else {
           staff = await manager.findOne(StaffMemberEntity, {
             where: {
@@ -51,6 +56,7 @@ export class EventsService {
               position: { id: positionId },
               event: { id: eventId },
             },
+            relations: ['user', 'event', 'position'],
             withDeleted: true,
           });
           if (staff?.deletedAt) {
@@ -58,13 +64,28 @@ export class EventsService {
             Object.assign(staff, staffData);
           } else {
             staff = manager.create(StaffMemberEntity, {
-              contractAttachment: contractAttachment?.name || '',
+              contractAttachment: contractAttachment,
               user: { id: userId },
               position: { id: positionId },
               event: { id: eventId },
               ...staffData,
             });
           }
+        }
+
+        //Move File
+        if (file) {
+          const destinationPath = `./uploads/contracts/${staff.event.id}`;
+          if (!fs.existsSync(destinationPath)) {
+            fs.mkdirSync(destinationPath, { recursive: true });
+          }
+          const newFilePath = path.join(
+            destinationPath,
+            `${staff.user.id}_${staff.position.id}_contract.pdf`,
+          );
+          fs.renameSync(file?.path, newFilePath);
+          staff.contractAttachment = newFilePath;
+          console.log(`Archivo movido a: ${newFilePath}`);
         }
         const savedStaff = await manager.save(staff);
         return await manager.findOne(StaffMemberEntity, {
@@ -181,6 +202,16 @@ export class EventsService {
     });
   }
 
+  async findStaffByEventId(id: number) {
+    return this.dataSource.transaction(async (manager) => {
+      const staff = await manager.find(StaffMemberEntity, {
+        where: { event: { id } },
+        relations: ['event', 'position', 'user'],
+      });
+      return staff;
+    });
+  }
+
   async removeStaffMember(id: number) {
     return this.dataSource.transaction(async (manager) => {
       const staff = await manager.findOne(StaffMemberEntity, {
@@ -195,10 +226,11 @@ export class EventsService {
           `Delete staff members from events in the past is not allowed`,
         );
       }
-      await manager.softRemove(staff);
+      await manager.remove(staff);
       return { message: 'Staff removed successfully' };
     });
   }
+
   private async validateEventExists(id: number): Promise<EventEntity> {
     const event: EventEntity | null = await this.eventsRepository.findOneBy({
       id,
