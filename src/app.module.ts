@@ -4,12 +4,14 @@ import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { FirebaseModule } from './firebase/firebase.module';
+import { PositionsModule } from './positions/positions.module';
 
 @Module({
   imports: [
     EventsModule,
     UsersModule,
     FirebaseModule,
+    PositionsModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
